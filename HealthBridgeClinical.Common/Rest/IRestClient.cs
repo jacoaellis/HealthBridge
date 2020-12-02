@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using RestSharp;
+using System.Collections.Generic;
 
 namespace HealthBridgeClinical.Common.Rest
 {
     public interface IRestClient
     {
-        Task<T> GetAsync<T>(string url);
+        IRestResponse Get<T>(string url, Dictionary<string, string> headers);
+
     }
 }

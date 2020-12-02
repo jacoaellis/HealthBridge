@@ -8,5 +8,12 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HealthBridgeClinical.Common\HealthBridgeClinical.Common.csproj" />
+    <ProjectReference Include="..\HealthBridgeClinical.Models\HealthBridgeClinical.Models.csproj" />
+    <ProjectReference Include="..\HealthBridgeClinical.Services.Contracts\HealthBridgeClinical.Services.Contracts.csproj" />
+    <ProjectReference Include="..\HealthBridgeClinical.Services\HealthBridgeClinical.Services.csproj" />
+  </ItemGroup>
+
 
 </Project>

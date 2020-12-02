@@ -1,34 +1,38 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using HealthBridgeClinical.Models.DTOs;
+using HealthBridgeClinical.Services.Contracts;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace HealthBridgeClinical.Controllers
 {
-    [Route("[controller/v1]")]
+    [Route("api/v1")]
     [ApiController]
     public class CovidController : ControllerBase
     {
         private readonly IHealthBridgeService _hbs;
 
+        public CovidController(IHealthBridgeService healthBridgeService)
+        {
+            _hbs = healthBridgeService;
+        }
+
         [HttpGet("continents")]
         [ProducesResponseType(typeof(ContinentsDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetContinents()
+        public IActionResult GetContinents()
         {
-            var serviceResponse = await _hbs.GetContinents();
+            var serviceResponse = _hbs.GetContinents();
             return Ok(serviceResponse);
         }
 
         [HttpGet("countries")]
         [ProducesResponseType(typeof(CountriesDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetCountries()
+        public IActionResult GetCountries()
         {
-            var serviceResponse = await _hbs.GetCountries();
+            var serviceResponse = _hbs.GetCountries();
             return Ok(serviceResponse);
         }
     }

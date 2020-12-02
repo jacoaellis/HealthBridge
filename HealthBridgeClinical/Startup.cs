@@ -1,3 +1,5 @@
+using HealthBridgeClinical.Common.DI;
+using HealthBridgeClinical.Services.DI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +27,15 @@ namespace HealthBridgeClinical
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Health Bridge Clinical", Version = "v1" });
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            });
+
+            services.ConfigureCommonModule();
+            services.ConfigureServiceModule();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

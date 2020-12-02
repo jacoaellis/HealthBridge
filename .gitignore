@@ -1,0 +1,17 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/HealthBridgeClinical/obj
+/HealthBridgeClinical.Common/bin/Debug/netcoreapp3.1
+/HealthBridgeClinical.Common/obj
+/HealthBridgeClinical.Models/bin/Debug
+/HealthBridgeClinical.Models/obj
+/HealthBridgeClinical.Services/bin/Debug
+/HealthBridgeClinical.Services/obj
+/HealthBridgeClinical.Services.Contracts/bin/Debug/netcoreapp3.1
+/HealthBridgeClinical.Services.Contracts/obj
+/HealthBridgeClinical/Controllers/WeatherForecastController.cs
+/HealthBridgeClinical/WeatherForecast.cs
+/.vs/HealthBridgeClinical
+/HealthBridgeClinical/.vs/HealthBridgeClinical

@@ -2,7 +2,9 @@
 using HealthBridgeClinical.Models.DTOs;
 using HealthBridgeClinical.Services.Contracts;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace HealthBridgeClinical.Services
@@ -29,9 +31,9 @@ namespace HealthBridgeClinical.Services
         {
             var url = $"{_baseUrl}/countries";
             var resopnse = _restClient.Get<Task>(url, _headers);
-            // from the data that returns logic needs to be applied to strip the Contries 
+            // from the data that returns logic needs to be applied to strip the countries 
             // call GetStatistics with a "?country=Afghanistan" appended parameter to get continent 
-            // build a CountriesDto and group it by continent
+            // build a CountriesDto and group it by continent summing info per continent
             var data = new ContinentsDto
             {
                 Continent = resopnse.Content
@@ -40,30 +42,42 @@ namespace HealthBridgeClinical.Services
             return data;
         }
 
-        public CountriesDto GetCountries()
+        public List<CountriesDto> GetCountries()
         {
-            var url = $"{_baseUrl}/countries";
-            var resopnse = _restClient.Get<Task>(url, _headers);
-            // from the data that returns logic needs to be applied to strip the Contries 
-            // call GetStatistics with a "?country=Afghanistan" appended parameter to get the statistics and return it into the results nitpikking [cases] for active and new, [deaths]
-            var data = new CountriesDto
-            {
-                Country = resopnse.Content
-            };
+            List<CountriesDto> countriesDtos = new List<CountriesDto>();
 
-            return data;
+            var url = $"{_baseUrl}/countries";
+            var response = _restClient.Get<Task>(url, _headers);
+            // from the data that returns logic needs to be applied to strip the countries 
+            // call GetStatistics with a "?country=Afghanistan" appended parameter to get the statistics and return it into the results nitpikking [cases] for active and new, [deaths]
+
+            JObject countriesContent = JObject.Parse(response.Content);
+            var countriesList = countriesContent.SelectToken("response");
+
+            foreach (var country in countriesList)
+            {
+                var data = GetStatistics(country.ToString());
+
+                countriesDtos.Add(data);
+            }
+
+            return countriesDtos;
         }
 
         public CountriesDto GetStatistics(string country)
         {
-            var url = $"{_baseUrl}/statistics?country={country}";
-            var resopnse = _restClient.Get<Task>(url, _headers);
-            var data = new CountriesDto
-            {
-                Continent = resopnse.Content
-            };
+            CountriesDto countryDtos = new CountriesDto();
 
-            return data;
+            var url = $"{_baseUrl}/statistics?country={country}";
+            var response = _restClient.Get<Task>(url, _headers);
+
+            JObject countryContent = JObject.Parse(response.Content);
+            JToken countryInfo = countryContent.SelectToken("response");
+            JToken a = countryInfo.SelectToken("continent");
+
+            countryDtos.Continent = "A";
+
+            return countryDtos;
         }
 
     }

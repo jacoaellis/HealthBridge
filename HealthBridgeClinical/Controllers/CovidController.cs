@@ -2,6 +2,7 @@
 using HealthBridgeClinical.Services.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace HealthBridgeClinical.Controllers
 {
@@ -27,7 +28,7 @@ namespace HealthBridgeClinical.Controllers
         }
 
         [HttpGet("countries")]
-        [ProducesResponseType(typeof(CountriesDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<CountriesDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCountries()

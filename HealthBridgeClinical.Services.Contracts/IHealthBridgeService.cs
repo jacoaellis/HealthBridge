@@ -5,7 +5,7 @@ namespace HealthBridgeClinical.Services.Contracts
 {
     public interface IHealthBridgeService
     {
-        ContinentsDto GetContinents();
+        List<ContinentsDto> GetContinents();
         List<CountriesDto> GetCountries();
     }
 }

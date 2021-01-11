@@ -5,6 +5,7 @@ using HealthBridgeClinical.Services.Contracts;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HealthBridgeClinical.Services
@@ -27,19 +28,37 @@ namespace HealthBridgeClinical.Services
 
         }
 
-        public ContinentsDto GetContinents()
+        public List<ContinentsDto> GetContinents()
         {
-            var url = $"{_baseUrl}/countries";
-            var resopnse = _restClient.Get<Task>(url, _headers);
-            // from the data that returns logic needs to be applied to strip the countries 
-            // call GetStatistics with a "?country=Afghanistan" appended parameter to get continent 
-            // build a CountriesDto and group it by continent summing info per continent
-            var data = new ContinentsDto
-            {
-                Continent = resopnse.Content
-            };
+            List<ContinentsDto> continentsDtos = new List<ContinentsDto>();
 
-            return data;
+            List<CountriesDto> continents = GetCountries();
+            foreach (var continent in continents.GroupBy(c => c.Continent).ToList())
+            {
+                if (continent.Key != null)
+                {
+                    ContinentsDto continentDto = new ContinentsDto();
+                    continentDto.Continent = continent.Key;
+                    continentDto.New = new CommonDataDto
+                    {
+                        Total = continent.Select(nt => nt.New.Total).Sum(),
+                        Percent = continent.Select(nt => nt.New.Percent).Sum()
+                    };
+                    continentDto.Active = new CommonDataDto
+                    {
+                        Total = continent.Select(nt => nt.Active.Total).Sum(),
+                        Percent = continent.Select(nt => nt.Active.Percent).Sum()
+                    };
+                    continentDto.Deaths = new CommonDataDto
+                    {
+                        Total = continent.Select(nt => nt.Deaths.Total).Sum(),
+                        Percent = continent.Select(nt => nt.Deaths.Percent).Sum()
+                    };
+                    continentsDtos.Add(continentDto);
+                }
+            }
+
+            return continentsDtos;
         }
 
         public List<CountriesDto> GetCountries()
@@ -61,11 +80,7 @@ namespace HealthBridgeClinical.Services
                 countriesDtos.Add(data);
             }
 
-            countriesDtos.Sort(delegate (CountriesDto x, CountriesDto y)
-            {
-                int res = x.Continent.CompareTo(y.Continent);
-                return res != 0 ? res : x.Country.CompareTo(y.Country);
-            });
+            countriesDtos.OrderBy(i => i.Continent).ThenBy(j => j.Country);
 
             return countriesDtos;
         }
@@ -90,21 +105,21 @@ namespace HealthBridgeClinical.Services
                     Total = countryResponse[0].SelectToken("cases").SelectToken("new").Type != JTokenType.Null ?
                         (int)countryResponse[0].SelectToken("cases").SelectToken("new") : 0,
                     Percent = countryResponse[0].SelectToken("cases").SelectToken("new").Type != JTokenType.Null ?
-                        (int)countryResponse[0].SelectToken("cases").SelectToken("new") / (int)countryResponse[0].SelectToken("cases").SelectToken("total") : 0
+                        (decimal)countryResponse[0].SelectToken("cases").SelectToken("new") / (decimal)countryResponse[0].SelectToken("cases").SelectToken("total") : 0
                 };
                 countryDtos.Active = new CommonDataDto
                 {
                     Total = countryResponse[0].SelectToken("cases").SelectToken("active").Type != JTokenType.Null ?
                         (int)countryResponse[0].SelectToken("cases").SelectToken("active") : 0,
                     Percent = countryResponse[0].SelectToken("cases").SelectToken("active").Type != JTokenType.Null ?
-                        (int)countryResponse[0].SelectToken("cases").SelectToken("active") / (int)countryResponse[0].SelectToken("cases").SelectToken("total") : 0
+                        (decimal)countryResponse[0].SelectToken("cases").SelectToken("active") / (decimal)countryResponse[0].SelectToken("cases").SelectToken("total") : 0
                 };
                 countryDtos.Deaths = new CommonDataDto
                 {
                     Total = countryResponse[0].SelectToken("deaths").SelectToken("new").Type != JTokenType.Null ?
                         (int)countryResponse[0].SelectToken("deaths").SelectToken("new") : 0,
                     Percent = countryResponse[0].SelectToken("deaths").SelectToken("new").Type != JTokenType.Null ?
-                        (int)countryResponse[0].SelectToken("deaths").SelectToken("new") / (int)countryResponse[0].SelectToken("cases").SelectToken("total") : 0
+                        (decimal)countryResponse[0].SelectToken("deaths").SelectToken("new") / (decimal)countryResponse[0].SelectToken("cases").SelectToken("total") : 0
                 };
             }
 

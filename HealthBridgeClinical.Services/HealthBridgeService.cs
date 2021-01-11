@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HealthBridgeClinical.Services
@@ -75,6 +76,7 @@ namespace HealthBridgeClinical.Services
 
             foreach (var country in countriesList)
             {
+                Thread.Sleep(2000);
                 var data = GetStatistics(country.ToString());
 
                 countriesDtos.Add(data);

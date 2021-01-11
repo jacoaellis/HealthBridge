@@ -3,7 +3,7 @@
     public class CommonDataDto
     {
         public int Total { get; set; }
-        public int Percent { get; set; }
+        public decimal Percent { get; set; }
 
     }
 }
